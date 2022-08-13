@@ -173,6 +173,7 @@ export function HexaGrid(width, height, wrap = false) {
 	 * @param {Number} y
 	 */
 	this.zoom = function (newWidth, x, y) {
+		console.time('zoom');
 		self.viewBox.update((box) => {
 			// const delta = -box.width * magnitude * 0.07;
 			const delta = box.width - newWidth;
@@ -190,6 +191,7 @@ export function HexaGrid(width, height, wrap = false) {
 				height: ymax - ymin
 			});
 		});
+		console.timeEnd('zoom');
 	};
 
 	/**
@@ -199,12 +201,14 @@ export function HexaGrid(width, height, wrap = false) {
 	 */
 	this.pan = function (dx, dy) {
 		self.viewBox.update((box) => {
+			console.time('pan');
 			const newBox = fixBoxBounds({
 				xmin: box.xmin - dx,
 				ymin: box.ymin - dy,
 				width: box.width,
 				height: box.height
 			});
+			console.timeEnd('pan');
 			return newBox;
 		});
 	};
@@ -352,6 +356,7 @@ export function HexaGrid(width, height, wrap = false) {
 	 * @returns {VisibleTile[]}
 	 */
 	const getVisibleTiles = function (box) {
+		console.time('getVisibleTiles');
 		let rmin = Math.floor(box.ymin / self.YSTEP) - 1;
 		let rmax = Math.ceil((box.ymin + box.height) / self.YSTEP) + 1;
 		if (!self.wrap) {
@@ -378,6 +383,7 @@ export function HexaGrid(width, height, wrap = false) {
 				});
 			}
 		}
+		console.timeEnd('getVisibleTiles');
 		return visibleTiles;
 	};
 
