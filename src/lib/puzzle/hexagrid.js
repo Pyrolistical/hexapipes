@@ -173,8 +173,8 @@ export function HexaGrid(width, height, wrap = false) {
 	 * @param {Number} y
 	 */
 	this.zoom = function (newWidth, x, y) {
-		console.time('zoom');
 		self.viewBox.update((box) => {
+			console.time('zoom');
 			// const delta = -box.width * magnitude * 0.07;
 			const delta = box.width - newWidth;
 			const xyScale = box.height / box.width;
@@ -184,6 +184,7 @@ export function HexaGrid(width, height, wrap = false) {
 			let ymin = box.ymin + relativeY * delta * xyScale;
 			let xmax = box.xmin + box.width - (1 - relativeX) * delta;
 			let ymax = box.ymin + box.height - (1 - relativeY) * delta * xyScale;
+			console.timeEnd('zoom');
 			return fixBoxBounds({
 				xmin: xmin,
 				ymin: ymin,
@@ -191,7 +192,6 @@ export function HexaGrid(width, height, wrap = false) {
 				height: ymax - ymin
 			});
 		});
-		console.timeEnd('zoom');
 	};
 
 	/**
@@ -201,6 +201,7 @@ export function HexaGrid(width, height, wrap = false) {
 	 */
 	this.pan = function (dx, dy) {
 		self.viewBox.update((box) => {
+			console.log('getVisibleTiles to pan', Date.now() - self.start);
 			console.time('pan');
 			const newBox = fixBoxBounds({
 				xmin: box.xmin - dx,
@@ -356,6 +357,7 @@ export function HexaGrid(width, height, wrap = false) {
 	 * @returns {VisibleTile[]}
 	 */
 	const getVisibleTiles = function (box) {
+		self.start = Date.now();
 		console.time('getVisibleTiles');
 		let rmin = Math.floor(box.ymin / self.YSTEP) - 1;
 		let rmax = Math.ceil((box.ymin + box.height) / self.YSTEP) + 1;
